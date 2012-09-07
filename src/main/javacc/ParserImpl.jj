@@ -1,0 +1,121 @@
+PARSER_BEGIN(ParserImpl)
+package net.thingly.funky.impl;
+
+import net.thingly.funky.Parser;
+import net.thingly.funky.Expr;
+import net.thingly.funky.EvalException;
+
+import net.thingly.funky.Environment;
+
+/** Simple brace matcher. */
+public class ParserImpl implements Parser {
+
+  /** Main entry point. */
+  public static void main(String args[]) throws ParseException, EvalException { // TODO handle exceptions!
+    Environment env = new Environment();
+    Parser parser = new ParserImpl(System.in);
+    Expr e = parser.parse();
+    while(!e.equals(EofExpr.EOF)){
+    	  System.out.println(e.eval(env).toString());
+    	  e = parser.parse();
+    }
+  }
+
+}
+
+PARSER_END(ParserImpl)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  < INTLIT: (["0"-"9"])+ >
+| < DEFVAR: ("D"|"d")("E"|"e")("F"|"f")("V"|"v")("A"|"a")("R"|"r") >
+| < DEFUN: ("D"|"d")("E"|"e")("F"|"f")("U"|"u")("N"|"n") > 
+| < ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* >
+| < OP: ("+"|"-"|"*"|"/") >
+}
+
+/** Root production. */
+Expr parse() :
+{ 
+	Expr e;
+	ListExpr l;
+	Token t;
+}
+{
+  t=<INTLIT> 
+  {
+  	return new IntExpr(Integer.parseInt(t.image));
+  }
+|
+  e=Id()
+  {
+  	return e;
+  }
+| "(" e=ListExpr() ")"
+  {
+  	return e;
+  }
+| <EOF>
+  {
+  	return EofExpr.EOF;
+  }
+}
+
+IdExpr Id() :
+{
+	Token t;
+}
+{
+	t=<ID>
+	{
+		return new IdExpr(t.image);
+	}
+}
+
+Expr ListExpr() :
+{
+	Token t,t1;
+	Expr e;
+	ListExpr l = new ListExpr(), tail = l;
+}
+{
+	t=<OP> ( e=parse() 
+	{
+		tail.car = e;
+		tail.cdr = new ListExpr();
+		tail = tail.cdr;
+	} )+
+	{
+	  return new OpExpr(t.image.charAt(0), l);
+	}
+|   <DEFUN> t=<ID> "(" ( e=Id() {
+      tail.car = e;
+      tail.cdr = new ListExpr();
+	  tail = tail.cdr;
+	})* ")" e=parse()
+	{
+	  return new DeFun(t.image, l, e);
+	}
+|	<DEFVAR> t=<ID> e=parse()
+	{
+		return new DefVar(t.image, e);
+	}
+|   t=<ID> ( e=parse() {
+      tail.car = e;
+      tail.cdr = new ListExpr();
+	  tail = tail.cdr;
+	})*
+	{
+		return new FunExpr(t.image, l);
+	}
+|   { return NilExpr.NIL; }
+}
+
