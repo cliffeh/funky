@@ -20,10 +20,13 @@ public class FunExprTest extends ParserTest {
 		}
 		str += ") " + fun + ")";
 		out.println(str);
+		out.flush();
+		Expr e = p.parse().eval(env); // parse the DeFun
+		
 		out.println("(foo 7 9)");
 		out.close();
 
-		Expr e = p.parse().eval(env); // parse the DeFun
+		
 		e = p.parse().eval(env); // parse the FunExpr
 		assertTrue(e instanceof IntExpr);
 		assertEquals((7 * 9), ((IntExpr) e).value);

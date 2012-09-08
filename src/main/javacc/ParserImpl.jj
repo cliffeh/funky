@@ -36,8 +36,10 @@ SKIP :
 TOKEN :
 {
   < INTLIT: (["0"-"9"])+ >
+| < QUOTE: ("Q"|"q")("U"|"u")("O"|"o")("T"|"t")("E"|"e") >
 | < DEFVAR: ("D"|"d")("E"|"e")("F"|"f")("V"|"v")("A"|"a")("R"|"r") >
-| < DEFUN: ("D"|"d")("E"|"e")("F"|"f")("U"|"u")("N"|"n") > 
+| < DEFUN: ("D"|"d")("E"|"e")("F"|"f")("U"|"u")("N"|"n") >
+| < LET: ("L"|"l")("E"|"e")("T"|"t") > 
 | < ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* >
 | < OP: ("+"|"-"|"*"|"/") >
 }
@@ -58,6 +60,10 @@ Expr parse() :
   e=Id()
   {
   	return e;
+  }
+| "'" e=parse()
+  {
+  	return new QuoteExpr(e);
   }
 | "(" e=ListExpr() ")"
   {
@@ -96,6 +102,9 @@ Expr ListExpr() :
 	{
 	  return new OpExpr(t.image.charAt(0), l);
 	}
+|	<QUOTE> e=parse() {
+	  return new QuoteExpr(e);
+	}
 |   <DEFUN> t=<ID> "(" ( e=Id() {
       tail.car = e;
       tail.cdr = new ListExpr();
@@ -107,6 +116,14 @@ Expr ListExpr() :
 |	<DEFVAR> t=<ID> e=parse()
 	{
 		return new DefVar(t.image, e);
+	}
+|	<LET> "(" ( "(" t=<ID> e=parse() {
+	  tail.car = new DefVar(t.image, e);
+	  tail.cdr = new ListExpr();
+	  tail = tail.cdr;
+	} ")" )* ")" e=parse()
+	{
+		return new LetExpr(l, e);
 	}
 |   t=<ID> ( e=parse() {
       tail.car = e;
