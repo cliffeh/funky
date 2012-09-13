@@ -9,7 +9,7 @@ import net.thingly.funky.impl.ParseException;
 
 import org.junit.Test;
 
-public class DefVarTest extends ParserTest {
+public class DefVarTest extends ExprTest {
 
 	@Test
 	public void parseDefVar() throws ParseException, EvalException {

@@ -7,7 +7,7 @@ import net.thingly.funky.impl.ParseException;
 
 import org.junit.Test;
 
-public class IntExprTest extends ParserTest {
+public class IntExprTest extends ExprTest {
 	@Test
 	public void parseIntExpr() throws ParseException, EvalException {
 		int value = 123;

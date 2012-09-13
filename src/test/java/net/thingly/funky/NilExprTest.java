@@ -7,7 +7,7 @@ import net.thingly.funky.impl.ParseException;
 
 import org.junit.Test;
 
-public class NilExprTest extends ParserTest {
+public class NilExprTest extends ExprTest {
 	@Test
 	public void parseNilExpr() throws ParseException, EvalException {
 		out.println("()");

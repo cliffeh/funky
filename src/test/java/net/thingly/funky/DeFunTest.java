@@ -8,7 +8,7 @@ import net.thingly.funky.impl.ParseException;
 
 import org.junit.Test;
 
-public class DeFunTest extends ParserTest {
+public class DeFunTest extends ExprTest {
 	@Test
 	public void parseDeFun() throws ParseException, EvalException {
 		String id = "foo";

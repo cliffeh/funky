@@ -7,7 +7,7 @@ import net.thingly.funky.impl.QuoteExpr;
 
 import org.junit.Test;
 
-public class QuoteExprTest extends ParserTest {
+public class QuoteExprTest extends ExprTest {
 	@Test
 	public void parseQuoteExpr() throws ParseException, EvalException {
 		out.println("(quote (+ 1 2))");

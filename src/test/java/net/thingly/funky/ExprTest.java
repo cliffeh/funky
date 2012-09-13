@@ -9,7 +9,7 @@ import net.thingly.funky.impl.ParserImpl;
 
 import org.junit.Before;
 
-public class ParserTest {
+public class ExprTest {
 
 	protected PrintWriter out;
 	protected Parser p;
