@@ -40,7 +40,7 @@ TOKEN :
 | < QUOTE:  "quote" >
 | < DEFVAR: "defvar" >
 | < DEFUN:  "defun" >
-| < LET:    "let" > 
+| < LET:    "let" >
 | < ID:     ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
 | < OP:     ("+"|"-"|"*"|"/") >
 | < STRLIT:

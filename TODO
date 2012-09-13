@@ -1,2 +1,4 @@
 * add some basic string operations (length, substr, etc.)
 * add some basic file operations (open, read, close, etc.)
+* implement floating-point numbers and arithmetic
+* re-jigger ints and floats to support arbitrary precision
