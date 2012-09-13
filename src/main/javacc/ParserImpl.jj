@@ -36,11 +36,14 @@ SKIP :
 
 TOKEN :
 {
-  < INTLIT: (["0"-"9"])+ >
+  < BOOL: ("#f"|"#t") >
+| < INTLIT: (["0"-"9"])+ >
 | < QUOTE:  "quote" >
 | < DEFVAR: "defvar" >
 | < DEFUN:  "defun" >
 | < LET:    "let" >
+| < AND:    "and" >
+| < OR:     "or" >
 | < SUBSTR: "substr" >
 | < STRLEN: "string-length" >
 | < ID:     ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
@@ -67,12 +70,17 @@ Expr parse() :
 	Token t;
 }
 {
-  e=Int()
+  t=<BOOL>
+  {
+    if(t.image.charAt(1) == 't')
+      return BoolExpr.TRUE;
+    return BoolExpr.FALSE;
+  }
+| e=Int()
   {
     return e;
   }
-|
-  e=Id()
+| e=Id()
   {
     return e;
   }
@@ -155,6 +163,22 @@ Expr ListExpr() :
 	} ")" )* ")" e=parse()
 	{
 		return new LetExpr(l, e);
+	}
+|   <AND> ( e=parse() {
+      tail.car = e;
+      tail.cdr = new ListExpr();
+	  tail = tail.cdr;
+	})*
+	{
+	  return new BoolOpExpr(BoolOpExpr.OP.AND, l);
+	}
+|   <OR> ( e=parse() {
+      tail.car = e;
+      tail.cdr = new ListExpr();
+	  tail = tail.cdr;
+	})*
+	{
+	  return new BoolOpExpr(BoolOpExpr.OP.OR, l);
 	}
 |	<SUBSTR> e=parse() e1=parse() (e2=parse())?
 	{

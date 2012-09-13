@@ -4,6 +4,7 @@ import net.thingly.funky.Environment;
 import net.thingly.funky.EvalException;
 import net.thingly.funky.Expr;
 
+// TODO rename to IntOpExpr?
 public class OpExpr implements Expr {
 
 	public char op;
