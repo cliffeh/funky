@@ -8,9 +8,11 @@ import net.thingly.funky.impl.StringExpr;
 import org.junit.Test;
 
 public class StringExprTest extends ExprTest {
+
+	private final String str = "\"this is my string\"";
+
 	@Test
 	public void parseStringExpr() throws ParseException, EvalException {
-		String str = "\"this is my string\"";
 		out.println(str);
 		out.flush();
 
@@ -20,5 +22,25 @@ public class StringExprTest extends ExprTest {
 		e = e.eval(env);
 		assertTrue(e instanceof StringExpr);
 		assertEquals(str, ((StringExpr) e).string);
+	}
+
+	// TODO put this in its own StringOpExpr class?
+	@Test
+	public void testSubstr() throws ParseException, EvalException {
+		// syntax: (substr string pos len?)
+		int pos = 5, len = 2;
+		out.println("(substr " + str + " " + pos + ")");
+		out.flush();
+
+		Expr e = p.parse().eval(env);
+		assertTrue(e instanceof StringExpr);
+		assertEquals(str.substring(pos), ((StringExpr) e).string);
+
+		out.println("(substr " + str + " " + pos + " " + len + ")");
+		out.close();
+
+		e = p.parse().eval(env);
+		assertTrue(e instanceof StringExpr);
+		assertEquals(str.substring(pos, (pos+len)), ((StringExpr) e).string);
 	}
 }

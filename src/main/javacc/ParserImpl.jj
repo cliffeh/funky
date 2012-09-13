@@ -41,6 +41,7 @@ TOKEN :
 | < DEFVAR: "defvar" >
 | < DEFUN:  "defun" >
 | < LET:    "let" >
+| < SUBSTR: "substr" >
 | < ID:     ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
 | < OP:     ("+"|"-"|"*"|"/") >
 | < STRLIT:
@@ -65,9 +66,9 @@ Expr parse() :
 	Token t;
 }
 {
-  t=<INTLIT> 
+  e=Int()
   {
-    return new IntExpr(Integer.parseInt(t.image));
+    return e;
   }
 |
   e=Id()
@@ -103,10 +104,21 @@ IdExpr Id() :
   }
 }
 
+IntExpr Int() :
+{
+	Token t;
+}
+{
+  t=<INTLIT>
+  {
+  	return new IntExpr(Integer.parseInt(t.image));
+  }
+}
+
 Expr ListExpr() :
 {
-  Token t,t1;
-  Expr e;
+  Token t;
+  Expr e,e1,e2=null;
   ListExpr l = new ListExpr(), tail = l;
 }
 {
@@ -141,6 +153,11 @@ Expr ListExpr() :
 	} ")" )* ")" e=parse()
 	{
 		return new LetExpr(l, e);
+	}
+|	<SUBSTR> e=parse() e1=parse() (e2=parse())?
+	{
+	  Expr[] params = (e2 == null) ? new Expr[] { e1 } : new Expr[] { e1, e2 };
+	  return new StringOpExpr(StringOpExpr.OP.SUBSTR, e, params);
 	}
 |   t=<ID> ( e=parse() {
       tail.car = e;

@@ -17,4 +17,8 @@ public class StringExpr implements Expr {
 		return this;
 	}
 
+	public String toString() {
+		return string;
+	}
+
 }
