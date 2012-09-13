@@ -42,6 +42,7 @@ TOKEN :
 | < DEFUN:  "defun" >
 | < LET:    "let" >
 | < SUBSTR: "substr" >
+| < STRLEN: "string-length" >
 | < ID:     ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
 | < OP:     ("+"|"-"|"*"|"/") >
 | < STRLIT:
@@ -81,7 +82,8 @@ Expr parse() :
   }
 | t=<STRLIT>
   {
-  	return new StringExpr(t.image);
+    // trim off leading and trailing quotes
+  	return new StringExpr(t.image.substring(1, t.image.length()-1));
   }
 | "(" e=ListExpr() ")"
   {
@@ -158,6 +160,10 @@ Expr ListExpr() :
 	{
 	  Expr[] params = (e2 == null) ? new Expr[] { e1 } : new Expr[] { e1, e2 };
 	  return new StringOpExpr(StringOpExpr.OP.SUBSTR, e, params);
+	}
+|	<STRLEN> e=parse()
+	{
+	  return new StringOpExpr(StringOpExpr.OP.STRLEN, e);
 	}
 |   t=<ID> ( e=parse() {
       tail.car = e;
