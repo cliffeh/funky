@@ -34,6 +34,8 @@ Equality operator _eq_:
 
 * `(eq 7 7)` => #t
 * `(eq 7 6)` => #f
+* `(eq 7 7 (+ 1 2) (+ 3 4))` => 3
+* `(eq 7 6 (+ 1 2) (+ 3 4))` => 7
 
 Variables and functions can be defined using _defvar_ and _defun_, respectively:
 
