@@ -141,7 +141,12 @@ Expr ListExpr() :
     tail = tail.cdr;
   } )+
   {
-    return new IntOpExpr(t.image.charAt(0), l);
+  	switch(t.image.charAt(0)){
+      case '+': return new OpExpr(OpExpr.OP.ADD, l);
+      case '-': return new OpExpr(OpExpr.OP.SUB, l);
+      case '*': return new OpExpr(OpExpr.OP.MUL, l);
+      case '/': return new OpExpr(OpExpr.OP.DIV, l);
+    }
   }
 |	<QUOTE> e=parse() {
 	  return new QuoteExpr(e);

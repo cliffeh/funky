@@ -1,7 +1,7 @@
 package net.thingly.funky;
 
 import static org.junit.Assert.assertTrue;
-import net.thingly.funky.impl.IntOpExpr;
+import net.thingly.funky.impl.OpExpr;
 import net.thingly.funky.impl.ParseException;
 import net.thingly.funky.impl.QuoteExpr;
 
@@ -16,7 +16,7 @@ public class QuoteExprTest extends ExprTest {
 		Expr e = p.parse();
 		assertTrue(e instanceof QuoteExpr);
 		e = e.eval(env);
-		assertTrue(e instanceof IntOpExpr);
+		assertTrue(e instanceof OpExpr);
 		// TODO make sure it's actually the OpExpr we're expecting
 
 		out.println("'(+ 1 2)");
@@ -25,7 +25,7 @@ public class QuoteExprTest extends ExprTest {
 		e = p.parse();
 		assertTrue(e instanceof QuoteExpr);
 		e = e.eval(env);
-		assertTrue(e instanceof IntOpExpr);
+		assertTrue(e instanceof OpExpr);
 		// TODO make sure it's actually the OpExpr we're expecting
 	}
 }
