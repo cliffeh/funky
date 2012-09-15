@@ -47,7 +47,7 @@ TOKEN :
 | < SUBSTR: "substr" >
 | < STRLEN: "string-length" >
 | < ID:     ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
-| < OP:     ("+"|"-"|"*"|"/") >
+| < INTOP:     ("+"|"-"|"*"|"/") >
 | < STRLIT:
       "\""
       (   (~["\"","\\","\n","\r"])
@@ -132,14 +132,14 @@ Expr ListExpr() :
   ListExpr l = new ListExpr(), tail = l;
 }
 {
-  t=<OP> ( e=parse() 
+  t=<INTOP> ( e=parse() 
   {
     tail.car = e;
     tail.cdr = new ListExpr();
     tail = tail.cdr;
   } )+
   {
-    return new OpExpr(t.image.charAt(0), l);
+    return new IntOpExpr(t.image.charAt(0), l);
   }
 |	<QUOTE> e=parse() {
 	  return new QuoteExpr(e);

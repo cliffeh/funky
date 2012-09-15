@@ -5,12 +5,12 @@ import net.thingly.funky.EvalException;
 import net.thingly.funky.Expr;
 
 // TODO rename to IntOpExpr?
-public class OpExpr implements Expr {
+public class IntOpExpr implements Expr {
 
 	public char op;
 	public ListExpr l;
 
-	public OpExpr(char op, ListExpr l) {
+	public IntOpExpr(char op, ListExpr l) {
 		this.op = op;
 		this.l = l;
 	}

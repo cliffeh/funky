@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import net.thingly.funky.impl.IntExpr;
 import net.thingly.funky.impl.ListExpr;
-import net.thingly.funky.impl.OpExpr;
+import net.thingly.funky.impl.IntOpExpr;
 import net.thingly.funky.impl.ParseException;
 
 import org.junit.Test;
@@ -17,9 +17,9 @@ public class OpExprTest extends ExprTest {
 		out.close();
 
 		Expr e = p.parse();
-		assertTrue(e instanceof OpExpr);
-		assertEquals('+', ((OpExpr) e).op);
-		ListExpr l = ((OpExpr) e).l;
+		assertTrue(e instanceof IntOpExpr);
+		assertEquals('+', ((IntOpExpr) e).op);
+		ListExpr l = ((IntOpExpr) e).l;
 		assertTrue(l.car instanceof IntExpr);
 		assertEquals(1, ((IntExpr) l.car).value);
 		l = l.cdr;
@@ -41,9 +41,9 @@ public class OpExprTest extends ExprTest {
 		out.close();
 
 		Expr e = p.parse();
-		assertTrue(e instanceof OpExpr);
-		assertEquals('*', ((OpExpr) e).op);
-		ListExpr l = ((OpExpr) e).l;
+		assertTrue(e instanceof IntOpExpr);
+		assertEquals('*', ((IntOpExpr) e).op);
+		ListExpr l = ((IntOpExpr) e).l;
 		assertTrue(l.car instanceof IntExpr);
 		assertEquals(3, ((IntExpr) l.car).value);
 		l = l.cdr;
@@ -65,9 +65,9 @@ public class OpExprTest extends ExprTest {
 		out.close();
 
 		Expr e = p.parse();
-		assertTrue(e instanceof OpExpr);
-		assertEquals('/', ((OpExpr) e).op);
-		ListExpr l = ((OpExpr) e).l;
+		assertTrue(e instanceof IntOpExpr);
+		assertEquals('/', ((IntOpExpr) e).op);
+		ListExpr l = ((IntOpExpr) e).l;
 		assertTrue(l.car instanceof IntExpr);
 		assertEquals(64, ((IntExpr) l.car).value);
 		l = l.cdr;
@@ -89,9 +89,9 @@ public class OpExprTest extends ExprTest {
 		out.close();
 
 		Expr e = p.parse();
-		assertTrue(e instanceof OpExpr);
-		assertEquals('-', ((OpExpr) e).op);
-		ListExpr l = ((OpExpr) e).l;
+		assertTrue(e instanceof IntOpExpr);
+		assertEquals('-', ((IntOpExpr) e).op);
+		ListExpr l = ((IntOpExpr) e).l;
 		assertTrue(l.car instanceof IntExpr);
 		assertEquals(64, ((IntExpr) l.car).value);
 		l = l.cdr;
