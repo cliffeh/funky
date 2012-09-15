@@ -70,4 +70,22 @@ public class StringOpExpr implements Expr {
 			throw new EvalException("unknown string operation");
 		}
 	}
+
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof StringOpExpr) {
+			StringOpExpr soe = ((StringOpExpr) expr);
+			if ((soe.op == this.op) && (soe.e.compareTo(this.e) == 0)) {
+				if (soe.params.length == this.params.length) {
+					for (int i = 0; i < params.length; i++) {
+						if (params[i].compareTo(soe.params[i]) != 0) {
+							return -1;
+						}
+					}
+					return 0;
+				}
+			}
+		}
+		return -1;
+	}
 }

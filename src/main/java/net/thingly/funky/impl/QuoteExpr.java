@@ -17,4 +17,11 @@ public class QuoteExpr implements Expr {
 		return quote;
 	}
 
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof QuoteExpr) {
+			return ((QuoteExpr) expr).quote.compareTo(this.quote);
+		}
+		return -1;
+	}
 }

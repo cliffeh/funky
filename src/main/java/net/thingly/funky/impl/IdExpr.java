@@ -24,4 +24,13 @@ public class IdExpr implements Expr {
 	public String toString() {
 		return id;
 	}
+
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof IdExpr) {
+			if (((IdExpr) expr).id.equals(this.id))
+				return 0;
+		}
+		return -1;
+	}
 }

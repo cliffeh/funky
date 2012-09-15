@@ -41,6 +41,7 @@ TOKEN :
 | < QUOTE:  "quote" >
 | < DEFVAR: "defvar" >
 | < DEFUN:  "defun" >
+| < EQ:     "eq" >
 | < LET:    "let" >
 | < AND:    "and" >
 | < OR:     "or" >
@@ -156,6 +157,10 @@ Expr ListExpr() :
 |	<DEFVAR> t=<ID> e=parse()
 	{
 		return new DefVar(t.image, e);
+	}
+|	<EQ> e=parse() e1=parse()
+	{
+		return new EqualOpExpr(e, e1);
 	}
 |	<LET> "(" ( "(" t=<ID> e=parse() {
 	  tail.car = new DefVar(t.image, e);

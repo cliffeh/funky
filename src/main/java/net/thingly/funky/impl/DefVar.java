@@ -24,4 +24,14 @@ public class DefVar implements Expr {
 		return new IdExpr(id);
 	}
 
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof DefVar) {
+			DefVar dv = ((DefVar) expr);
+			if (dv.id.equals(this.id) && (dv.e.compareTo(this.e) == 0))
+				return 0;
+		}
+		return -1;
+	}
+
 }

@@ -20,4 +20,9 @@ public class EofExpr implements Expr {
 		return "<EOF>";
 	}
 
+	@Override
+	public int compareTo(Expr expr) {
+		return this.equals(expr) ? 0 : -1;
+	}
+
 }

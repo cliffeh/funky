@@ -19,8 +19,17 @@ public class IntExpr implements Expr {
 	public Expr eval(Environment env) {
 		return this;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return "" + value;
+	}
+
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof IntExpr) {
+			if (((IntExpr) expr).value == this.value)
+				return 0;
+		}
+		return -1;
 	}
 }

@@ -46,4 +46,15 @@ public class FunExpr implements Expr {
 		// evaluate the function body using the new scope and return the result
 		return fun.body.eval(funEnv);
 	}
+
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof FunExpr) {
+			FunExpr fe = ((FunExpr) expr);
+			if (fe.id.equals(this.id)
+					&& (fe.params.compareTo(this.params) == 0))
+				return 0;
+		}
+		return -1;
+	}
 }

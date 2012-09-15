@@ -21,4 +21,13 @@ public class StringExpr implements Expr {
 		return string;
 	}
 
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof StringExpr) {
+			if (((StringExpr) expr).string.equals(this.string))
+				return 0;
+		}
+		return -1;
+	}
+
 }

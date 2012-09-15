@@ -17,4 +17,8 @@ public class NilExpr extends ListExpr {
 	public String toString() {
 		return "()";
 	}
+
+	public int compareTo(Expr expr) {
+		return (this.equals(expr)) ? 0 : -1;
+	}
 }

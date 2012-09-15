@@ -21,9 +21,20 @@ public class DeFun implements Expr {
 		env.putFunction(this.id, this);
 		return new IdExpr(this.id);
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return "(" + id + " " + vars.toString() + " " + body.toString() + ")";
+	}
+
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof DeFun) {
+			DeFun df = ((DeFun) expr);
+			if (df.id.equals(this.id) && (df.vars.compareTo(this.vars) == 0)
+					&& (df.body.compareTo(this.body) == 0))
+				return 0;
+		}
+		return -1;
 	}
 
 }

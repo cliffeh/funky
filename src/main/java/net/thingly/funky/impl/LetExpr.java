@@ -29,4 +29,15 @@ public class LetExpr implements Expr {
 		return e.eval(letEnv);
 	}
 
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof LetExpr) {
+			LetExpr le = ((LetExpr) expr);
+			if ((le.vars.compareTo(this.vars) == 0)
+					&& (le.e.compareTo(this.e) == 0))
+				return 0;
+		}
+		return -1;
+	}
+
 }

@@ -25,4 +25,9 @@ public class BoolExpr implements Expr {
 		return eval() ? "#t" : "#f";
 	}
 
+	@Override
+	public int compareTo(Expr expr) {
+		return expr.equals(this) ? 0 : -1;
+	}
+
 }

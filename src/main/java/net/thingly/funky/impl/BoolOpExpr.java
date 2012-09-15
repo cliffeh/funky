@@ -50,4 +50,12 @@ public class BoolOpExpr implements Expr {
 		}
 		return b ? BoolExpr.TRUE : BoolExpr.FALSE;
 	}
+
+	@Override
+	public int compareTo(Expr expr) {
+		if ((expr instanceof BoolOpExpr) && (((BoolOpExpr) expr).op == this.op)) {
+			return l.compareTo(((BoolOpExpr) expr).l);
+		}
+		return -1;
+	}
 }

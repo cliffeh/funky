@@ -103,4 +103,14 @@ public class IntOpExpr implements Expr {
 		str += ")";
 		return str;
 	}
+
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof IntOpExpr) {
+			IntOpExpr ioe = ((IntOpExpr) expr);
+			if ((ioe.op == this.op) && (ioe.l.compareTo(this.l) == 0))
+				return 0;
+		}
+		return -1;
+	}
 }

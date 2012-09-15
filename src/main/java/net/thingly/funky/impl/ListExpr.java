@@ -33,4 +33,15 @@ public class ListExpr implements Expr {
 		str += ")";
 		return str;
 	}
+
+	@Override
+	public int compareTo(Expr expr) {
+		if (expr instanceof ListExpr) {
+			ListExpr le = ((ListExpr) expr);
+			if ((le.car.compareTo(this.car) == 0)
+					&& (le.cdr.compareTo(this.cdr) == 0))
+				return 0;
+		}
+		return -1;
+	}
 }
