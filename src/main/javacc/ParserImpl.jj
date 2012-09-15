@@ -46,6 +46,7 @@ TOKEN :
 | < OR:     "or" >
 | < SUBSTR: "substr" >
 | < STRLEN: "string-length" >
+| < CHARAT: "string-char" >
 | < ID:     ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
 | < INTOP:     ("+"|"-"|"*"|"/") >
 | < STRLIT:
@@ -184,6 +185,10 @@ Expr ListExpr() :
 	{
 	  Expr[] params = (e2 == null) ? new Expr[] { e1 } : new Expr[] { e1, e2 };
 	  return new StringOpExpr(StringOpExpr.OP.SUBSTR, e, params);
+	}
+|	<CHARAT> e=parse() e1=parse()
+	{
+		return new StringOpExpr(StringOpExpr.OP.CHARAT, e, new Expr[]{ e1 });
 	}
 |	<STRLEN> e=parse()
 	{

@@ -54,4 +54,15 @@ public class StringExprTest extends ExprTest {
 		assertTrue(e instanceof IntExpr);
 		assertEquals(str.length(), ((IntExpr) e).value);
 	}
+
+	@Test
+	public void testStringChar() throws ParseException, EvalException {
+		int pos = 5;
+		out.println("(string-char \"" + str + "\" " + pos + ")");
+		out.close();
+
+		Expr e = p.parse().eval(env);
+		assertTrue(e instanceof StringExpr);
+		assertEquals("" + str.charAt(pos), ((StringExpr) e).string);
+	}
 }

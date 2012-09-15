@@ -7,7 +7,7 @@ import net.thingly.funky.Expr;
 public class StringOpExpr implements Expr {
 
 	enum OP {
-		SUBSTR, STRLEN
+		SUBSTR, STRLEN, CHARAT
 	}
 
 	public OP op;
@@ -55,6 +55,16 @@ public class StringOpExpr implements Expr {
 						"incorrect number of parameters for string-length ("
 								+ params.length + ")");
 			return new IntExpr(((StringExpr) e).string.length());
+		}
+		case CHARAT: {
+			if (params.length != 1)
+				throw new EvalException(
+						"incorrect number of parameters for string-char ("
+								+ params.length + ")");
+			return new StringExpr(
+					""
+							+ ((StringExpr) e).string
+									.charAt(((IntExpr) params[0]).value));
 		}
 		default:
 			throw new EvalException("unknown string operation");
