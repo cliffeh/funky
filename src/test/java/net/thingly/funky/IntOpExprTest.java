@@ -9,7 +9,7 @@ import net.thingly.funky.impl.ParseException;
 
 import org.junit.Test;
 
-public class OpExprTest extends ExprTest {
+public class IntOpExprTest extends ExprTest {
 
 	@Test
 	public void parseAddOpExpr() throws ParseException, EvalException {

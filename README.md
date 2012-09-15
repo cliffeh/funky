@@ -19,11 +19,12 @@ project directory: `bin/funky`
 
 ### supported expressions
 
-Basic integer operations (add, subtract, multiply, divide):
+Basic integer operations (add, subtract, multiply, divide) which support an arbitrary number of arguments:
 
 * `(+ 1 2)` => 3
 * `(* 6 7)` => 42
 * `(* 5 (+ 3 4))` => 35
+* `(+ 1 2 3 4)` => 10
 
 Boolean operations _and_ and _or_:
 
@@ -62,3 +63,4 @@ There are a whole lot of things not currently supported by funky. This is a list
 * arbitrary-precision integers and floats
 * basic file and socket operations (_open_, _read_, _write_)
 * basic program control constructs (_if_, _while_/_for_ loops)
+* list manipulation (_car_, _cdr_, _cons_)

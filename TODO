@@ -2,3 +2,4 @@
 * add some basic file operations (open, read, close, etc.)
 * implement floating-point numbers and arithmetic
 * re-jigger ints and floats to support arbitrary precision
+* consolidate *OpExpr classes into fewer classes (1, perhaps?)
