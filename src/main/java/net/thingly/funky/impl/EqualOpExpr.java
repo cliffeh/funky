@@ -7,16 +7,23 @@ import net.thingly.funky.Expr;
 public class EqualOpExpr implements Expr {
 
 	public Expr e1, e2;
+	public Expr t, f;
 
 	public EqualOpExpr(Expr e1, Expr e2) {
+		this(e1, e2, BoolExpr.TRUE, BoolExpr.FALSE);
+	}
+
+	public EqualOpExpr(Expr e1, Expr e2, Expr t, Expr f) {
 		this.e1 = e1;
 		this.e2 = e2;
+		this.t = t;
+		this.f = f;
 	}
 
 	@Override
 	public Expr eval(Environment env) throws EvalException {
-		return (e1.eval(env).compareTo(e2.eval(env)) == 0) ? BoolExpr.TRUE
-				: BoolExpr.FALSE;
+		return (e1.eval(env).compareTo(e2.eval(env)) == 0) ? t.eval(env) : f
+				.eval(env);
 	}
 
 	@Override

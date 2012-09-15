@@ -130,7 +130,7 @@ IntExpr Int() :
 Expr ListExpr() :
 {
   Token t;
-  Expr e,e1,e2=null;
+  Expr e,e1,e2=null,e3=null;
   ListExpr l = new ListExpr(), tail = l;
 }
 {
@@ -158,9 +158,9 @@ Expr ListExpr() :
 	{
 		return new DefVar(t.image, e);
 	}
-|	<EQ> e=parse() e1=parse()
+|	<EQ> e=parse() e1=parse() (e2=parse() e3=parse())?
 	{
-		return new EqualOpExpr(e, e1);
+		return (e2 == null) ? new EqualOpExpr(e, e1) : new EqualOpExpr(e, e1, e2, e3);
 	}
 |	<LET> "(" ( "(" t=<ID> e=parse() {
 	  tail.car = new DefVar(t.image, e);
@@ -188,7 +188,7 @@ Expr ListExpr() :
 	}
 |	<SUBSTR> e=parse() e1=parse() (e2=parse())?
 	{
-	  Expr[] params = (e2 == null) ? new Expr[] { e1 } : new Expr[] { e1, e2 };
+	  Expr[] params = (e2 == null) ? new Expr[] { e1 } : new Expr[] { e1,e2 };
 	  return new StringOpExpr(StringOpExpr.OP.SUBSTR, e, params);
 	}
 |	<CHARAT> e=parse() e1=parse()
