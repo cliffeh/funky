@@ -31,7 +31,10 @@ public class BoolExprTest extends ExprTest {
 		out.println("(and #t #t)");
 		out.flush();
 
-		Expr e = p.parse().eval(env);
+		Expr e = p.parse();
+		System.err.println(e.toString());
+		
+		// Expr e = p.parse().eval(env);
 		assertTrue(e instanceof BoolExpr);
 		assertEquals(e, BoolExpr.TRUE);
 

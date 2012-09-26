@@ -7,12 +7,12 @@ import net.thingly.funky.Expr;
 public class DeFun implements Expr {
 
 	public String id;
-	public ListExpr vars;
+	public ListExpr formals;
 	public Expr body;
 
-	public DeFun(String id, ListExpr vars, Expr body) {
+	public DeFun(String id, ListExpr formals, Expr body) {
 		this.id = id;
-		this.vars = vars;
+		this.formals = formals;
 		this.body = body;
 	}
 
@@ -23,14 +23,14 @@ public class DeFun implements Expr {
 	}
 
 	public String toString() {
-		return "(" + id + " " + vars.toString() + " " + body.toString() + ")";
+		return "(" + id + " " + formals.toString() + " " + body.toString() + ")";
 	}
 
 	@Override
 	public int compareTo(Expr expr) {
 		if (expr instanceof DeFun) {
 			DeFun df = ((DeFun) expr);
-			if (df.id.equals(this.id) && (df.vars.compareTo(this.vars) == 0)
+			if (df.id.equals(this.id) && (df.formals.compareTo(this.formals) == 0)
 					&& (df.body.compareTo(this.body) == 0))
 				return 0;
 		}

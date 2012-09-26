@@ -1,5 +1,7 @@
 package net.thingly.funky.impl;
 
+import java.util.List;
+
 import net.thingly.funky.Environment;
 import net.thingly.funky.EvalException;
 import net.thingly.funky.Expr;
@@ -7,15 +9,15 @@ import net.thingly.funky.Expr;
 public class FunExpr implements Expr {
 
 	public String id;
-	public ListExpr params;
+	public ListExpr actuals;
 
 	public FunExpr(String id) {
 		this(id, NilExpr.NIL);
 	}
 
-	public FunExpr(String id, ListExpr params) {
+	public FunExpr(String id, ListExpr actuals) {
 		this.id = id;
-		this.params = params;
+		this.actuals = actuals;
 	}
 
 	@Override
@@ -30,18 +32,22 @@ public class FunExpr implements Expr {
 		Environment funEnv = new Environment(env);
 
 		// evaluate and bind the parameters to their respective variable names
-		ListExpr v = fun.vars;
-		ListExpr p = params;
-		while (v.cdr != null && p.cdr != null) {
-			// TODO handle if !(v.car instanceof IdExpr), maybe at defun time
-			funEnv.putVariable(((IdExpr) v.car).id, p.car.eval(env));
-			v = v.cdr;
-			p = p.cdr;
+		ListExpr f = fun.formals;
+		ListExpr a = actuals;
+
+		for (; (!f.car.equals(ListExpr.NIL) && !a.car.equals(ListExpr.NIL)); f = f.cdr, a = a.cdr) {
+			// TODO what if !(f.car instanceof IdExpr)?
+			funEnv.putVariable(((IdExpr) f.car).id, a.car.eval(env));
 		}
-		if (v.cdr != null || p.cdr != null) {
-			// TODO try and fail more gracefully than this
-			throw new EvalException("function parameter count mismatch");
-		}
+		// check for a parameter count mismatch
+		if (!f.car.equals(ListExpr.NIL))
+			throw new EvalException(
+					"parameter count mismatch: too few parameters provided to function '"
+							+ id + "'");
+		if (!a.car.equals(ListExpr.NIL))
+			throw new EvalException(
+					"parameter count mismatch: too many parameters provided to function '"
+							+ id + "'");
 
 		// evaluate the function body using the new scope and return the result
 		return fun.body.eval(funEnv);
@@ -52,7 +58,7 @@ public class FunExpr implements Expr {
 		if (expr instanceof FunExpr) {
 			FunExpr fe = ((FunExpr) expr);
 			if (fe.id.equals(this.id)
-					&& (fe.params.compareTo(this.params) == 0))
+					&& (fe.actuals.compareTo(this.actuals) == 0))
 				return 0;
 		}
 		return -1;

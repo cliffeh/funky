@@ -1,217 +1,4 @@
-PARSER_BEGIN(ParserImpl)
-package net.thingly.funky.impl;
-
-import net.thingly.funky.Parser;
-import net.thingly.funky.Expr;
-import net.thingly.funky.EvalException;
-
-import net.thingly.funky.Environment;
-
-/** Simple brace matcher. */
-public class ParserImpl implements Parser {
-
-  /** Main entry point. */
-  public static void main(String args[]) throws ParseException, EvalException {
-    // TODO add some arg processing, etc.
+PARSER_BEGIN(ParserImpl)package net.thingly.funky.impl;import net.thingly.funky.Parser;import net.thingly.funky.Expr;import net.thingly.funky.EvalException;import net.thingly.funky.Environment;/** Simple brace matcher. */public class ParserImpl implements Parser{  /** Main entry point. */  public static void main(String args []) throws ParseException, EvalException  {    // TODO add some arg processing, etc.
     // TODO handle exceptions
-    Environment env = new Environment();
-    Parser parser = new ParserImpl(System.in);
-    Expr e = parser.parse();
-    while(!e.equals(EofExpr.EOF)){
-    	  System.out.println(e.eval(env).toString());
-    	  e = parser.parse();
-    }
-  }
-}
-
-PARSER_END(ParserImpl)
-
-SKIP :
-{
-  " "
-| "\t"
-| "\n"
-| "\r"
-}
-
-TOKEN :
-{
-  < BOOL: ("#f"|"#t") >
-| < INTLIT: (["0"-"9"])+ >
-| < QUOTE:  "quote" >
-| < DEFVAR: "defvar" >
-| < DEFUN:  "defun" >
-| < EQ:     "eq" >
-| < LET:    "let" >
-| < AND:    "and" >
-| < OR:     "or" >
-| < SUBSTR: "substr" >
-| < STRLEN: "string-length" >
-| < CHARAT: "string-char" >
-| < ID:     ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
-| < INTOP:     ("+"|"-"|"*"|"/") >
-| < STRLIT:
-      "\""
-      (   (~["\"","\\","\n","\r"])
-        | ("\\"
-            ( ["n","t","b","r","f","\\","'","\""]
-            | ["0"-"7"] ( ["0"-"7"] )?
-            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
-            )
-          )
-      )*
-      "\""
-  >
-}
-
-/** Root production. */
-Expr parse() :
-{ 
-	Expr e;
-	ListExpr l;
-	Token t;
-}
-{
-  t=<BOOL>
-  {
-    if(t.image.charAt(1) == 't')
-      return BoolExpr.TRUE;
-    return BoolExpr.FALSE;
-  }
-| e=Int()
-  {
-    return e;
-  }
-| e=Id()
-  {
-    return e;
-  }
-| "'" e=parse()
-  {
-    return new QuoteExpr(e);
-  }
-| t=<STRLIT>
-  {
-    // trim off leading and trailing quotes
-  	return new StringExpr(t.image.substring(1, t.image.length()-1));
-  }
-| "(" e=ListExpr() ")"
-  {
-    return e;
-  }
-| <EOF>
-  {
-    return EofExpr.EOF;
-  }
-}
-
-IdExpr Id() :
-{
-	Token t;
-}
-{
-  t=<ID>
-  {
-    return new IdExpr(t.image);
-  }
-}
-
-IntExpr Int() :
-{
-	Token t;
-}
-{
-  t=<INTLIT>
-  {
-  	return new IntExpr(Integer.parseInt(t.image));
-  }
-}
-
-Expr ListExpr() :
-{
-  Token t;
-  Expr e,e1,e2=null,e3=null;
-  ListExpr l = new ListExpr(), tail = l;
-}
-{
-  t=<INTOP> ( e=parse() 
-  {
-    tail.car = e;
-    tail.cdr = new ListExpr();
-    tail = tail.cdr;
-  } )+
-  {
-  	switch(t.image.charAt(0)){
-      case '+': return new OpExpr(OpExpr.OP.ADD, l);
-      case '-': return new OpExpr(OpExpr.OP.SUB, l);
-      case '*': return new OpExpr(OpExpr.OP.MUL, l);
-      case '/': return new OpExpr(OpExpr.OP.DIV, l);
-    }
-  }
-|	<QUOTE> e=parse() {
-	  return new QuoteExpr(e);
-	}
-|   <DEFUN> t=<ID> "(" ( e=Id() {
-      tail.car = e;
-      tail.cdr = new ListExpr();
-	  tail = tail.cdr;
-	})* ")" e=parse()
-	{
-	  return new DeFun(t.image, l, e);
-	}
-|	<DEFVAR> t=<ID> e=parse()
-	{
-		return new DefVar(t.image, e);
-	}
-|	<EQ> e=parse() e1=parse() (e2=parse() e3=parse())?
-	{
-		return (e2 == null) ? new EqualOpExpr(e, e1) : new EqualOpExpr(e, e1, e2, e3);
-	}
-|	<LET> "(" ( "(" t=<ID> e=parse() {
-	  tail.car = new DefVar(t.image, e);
-	  tail.cdr = new ListExpr();
-	  tail = tail.cdr;
-	} ")" )* ")" e=parse()
-	{
-		return new LetExpr(l, e);
-	}
-|   <AND> ( e=parse() {
-      tail.car = e;
-      tail.cdr = new ListExpr();
-	  tail = tail.cdr;
-	})*
-	{
-	  return new BoolOpExpr(BoolOpExpr.OP.AND, l);
-	}
-|   <OR> ( e=parse() {
-      tail.car = e;
-      tail.cdr = new ListExpr();
-	  tail = tail.cdr;
-	})*
-	{
-	  return new BoolOpExpr(BoolOpExpr.OP.OR, l);
-	}
-|	<SUBSTR> e=parse() e1=parse() (e2=parse())?
-	{
-	  Expr[] params = (e2 == null) ? new Expr[] { e1 } : new Expr[] { e1,e2 };
-	  return new StringOpExpr(StringOpExpr.OP.SUBSTR, e, params);
-	}
-|	<CHARAT> e=parse() e1=parse()
-	{
-		return new StringOpExpr(StringOpExpr.OP.CHARAT, e, new Expr[]{ e1 });
-	}
-|	<STRLEN> e=parse()
-	{
-	  return new StringOpExpr(StringOpExpr.OP.STRLEN, e);
-	}
-|   t=<ID> ( e=parse() {
-      tail.car = e;
-      tail.cdr = new ListExpr();
-	  tail = tail.cdr;
-	})*
-	{
-		return new FunExpr(t.image, l);
-	}
-|   { return NilExpr.NIL; }
-}
-
+    Environment env = new Environment();    Parser parser = new ParserImpl(System.in);    Expr e = parser.parse();    while (!e.equals(EofExpr.EOF))    {      System.out.println(e.eval(env).toString());      e = parser.parse();    }  }}PARSER_END(ParserImpl)SKIP :{  " "| "\t"| "\n"| "\r"}TOKEN :{  < BOOL :    (      "#f"    | "#t"    ) >| < INTLIT : ([ "0"-"9" ])+ >| < QUOTE : "quote" >| < DEFVAR : "defvar" >| < DEFUN : "defun" >| < EQ : "eq" >| < LET : "let" >| < AND : "and" >| < OR : "or" >| < SUBSTR : "substr" >| < STRLEN : "string-length" >| < CHARAT : "string-char" >| < ID : [ "a"-"z", "A"-"Z", "_" ] ([ "a"-"z", "A"-"Z", "_", "-", "0"-"9" ])* >| < INTOP :    (      "+"    | "-"    | "*"    | "/"    ) >| < STRLIT :    "\""    (      (~[ "\"", "\\", "\n", "\r" ])    |      (        "\\"        (          [ "n", "t", "b", "r", "f", "\\", "'", "\"" ]        | [ "0"-"7" ] ([ "0"-"7" ])?        | [ "0"-"3" ] [ "0"-"7" ] [ "0"-"7" ]        )      )    )*    "\"" >}/** Root production. */Expr parse() :{  Expr e;  ListExpr l;  Token t;}{  t = < BOOL >  {    if (t.image.charAt(1) == 't') return BoolExpr.TRUE;    return BoolExpr.FALSE;  }| e = Int()  {    return e;  }| e = Id()  {    return e;  }| "'" e = parse()  {    return new QuoteExpr(e);  }| t = < STRLIT >  {    // trim off leading and trailing quotes
+    return new StringExpr(t.image.substring(1, t.image.length() - 1));  }| "(" e = ListExpr() ")"  {    return e;  }| < EOF >  {    return EofExpr.EOF;  }}IdExpr Id() :{  Token t;}{  t = < ID >  {    return new IdExpr(t.image);  }}IntExpr Int() :{  Token t;}{  t = < INTLIT >  {    return new IntExpr(Integer.parseInt(t.image));  }}Expr ListExpr() :{  Token t;  Expr e, e1, e2 = null, e3 = null;  ListExpr l = new ListExpr(), tail = l;}{  t = < INTOP >  (    e = parse()    {      tail.car = e;      tail.cdr = new ListExpr();      tail = tail.cdr;    }  )+  {    switch (t.image.charAt(0))    {      case '+' : return new OpExpr(OpExpr.OP.ADD, l);      case '-' : return new OpExpr(OpExpr.OP.SUB, l);      case '*' : return new OpExpr(OpExpr.OP.MUL, l);      case '/' : return new OpExpr(OpExpr.OP.DIV, l);    }  }| < QUOTE > e = parse()  {    return new QuoteExpr(e);  }| < DEFUN > t = < ID > "("  (    e = Id()    {      tail.car = e;      tail.cdr = new ListExpr();      tail = tail.cdr;    }  )*  ")" e = parse()  {    return new DeFun(t.image, l, e);  }| < DEFVAR > t = < ID > e = parse()  {    return new DefVar(t.image, e);  }| < EQ > e = parse() e1 = parse()  (    e2 = parse() e3 = parse()  )?  {    return (e2 == null) ? new EqualOpExpr(e, e1) : new EqualOpExpr(e, e1, e2, e3);  }| < LET > "("  (    "(" t = < ID > e = parse()    {      tail.car = new DefVar(t.image, e);      tail.cdr = new ListExpr();      tail = tail.cdr;    }    ")"  )*  ")" e = parse()  {    return new LetExpr(l, e);  }| < AND >  (    e = parse()    {      tail.car = e;      tail.cdr = new ListExpr();      tail = tail.cdr;    }  )*  {    return new BoolOpExpr(BoolOpExpr.OP.AND, l);  }| < OR >  (    e = parse()    {      tail.car = e;      tail.cdr = new ListExpr();      tail = tail.cdr;    }  )*  {    return new BoolOpExpr(BoolOpExpr.OP.OR, l);  }| < SUBSTR > e = parse() e1 = parse()  (    e2 = parse()  )?  {    Expr [ ] params = (e2 == null) ? new Expr [ ]    {      e1    }    : new Expr [ ]    {      e1, e2    }    ;    return new StringOpExpr(StringOpExpr.OP.SUBSTR, e, params);  }| < CHARAT > e = parse() e1 = parse()  {    return new StringOpExpr(StringOpExpr.OP.CHARAT, e, new Expr [ ]    {      e1    }    );  }| < STRLEN > e = parse()  {    return new StringOpExpr(StringOpExpr.OP.STRLEN, e);  }| t = < ID >  (    e = parse()    {      tail.car = e;      tail.cdr = new ListExpr();      tail = tail.cdr;    }  )*  {    return new FunExpr(t.image, l);  }|  {    return NilExpr.NIL;  }}

@@ -34,7 +34,7 @@ public class BoolOpExpr implements Expr {
 	private Expr evalAnd(Environment env) throws EvalException {
 		boolean b = true;
 		// break as soon as we've gone false
-		for (ListExpr le = l; (b && le.car != NilExpr.NIL); le = le.cdr) {
+		for (ListExpr le = l; (b && !le.car.equals(NilExpr.NIL)); le = le.cdr) {
 			// TODO type checking!
 			b = b && (((BoolExpr) le.car.eval(env)).eval());
 		}
@@ -44,7 +44,7 @@ public class BoolOpExpr implements Expr {
 	private Expr evalOr(Environment env) throws EvalException {
 		boolean b = false;
 		// break as soon as we've gone true
-		for (ListExpr le = l; (!b && le.car != NilExpr.NIL); le = le.cdr) {
+		for (ListExpr le = l; (!b && !le.car.equals(NilExpr.NIL)); le = le.cdr) {
 			// TODO type checking!
 			b = b || (((BoolExpr) le.car.eval(env)).eval());
 		}
@@ -57,5 +57,15 @@ public class BoolOpExpr implements Expr {
 			return l.compareTo(((BoolOpExpr) expr).l);
 		}
 		return -1;
+	}
+	
+	public String toString(){
+		String str = "(";
+		str += (op == OP.AND) ? "and" : "or";
+		for (ListExpr le = l; !le.car.equals(NilExpr.NIL); le = le.cdr) {
+			str += " " + le.car.toString();
+		}
+		str += ")";
+		return str;
 	}
 }

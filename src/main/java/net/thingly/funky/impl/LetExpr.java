@@ -1,5 +1,7 @@
 package net.thingly.funky.impl;
 
+import java.util.List;
+
 import net.thingly.funky.Environment;
 import net.thingly.funky.EvalException;
 import net.thingly.funky.Expr;
@@ -20,12 +22,9 @@ public class LetExpr implements Expr {
 		Environment letEnv = new Environment(env);
 
 		// put each of the variables into the environment
-		for (ListExpr l = vars; l.cdr != null; l = l.cdr) {
-			// TODO double-check that each of these is a variable definition,
-			// maybe at parse time?
-			l.car.eval(letEnv);
-		}
+		vars.eval(letEnv);
 
+		// finally, evaluate the expression
 		return e.eval(letEnv);
 	}
 
